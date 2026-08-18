@@ -73,12 +73,17 @@ function MapView() {
       controller={true}
       layers={layers}
       getTooltip={({ object }) =>
-        object
-          ? {
-              text: `${object.zone_id}\nRisk Score: ${object.risk_score}\n${object.status}`
-            }
-          : null
+  object
+    ? {
+        text:
+          `Prediction: ${object.prediction_id}\n` +
+          `Zone: ${object.zone_id}\n` +
+          `Disease: ${object.disease}\n` +
+          `Risk Score: ${object.risk_score}\n` +
+          `Status: ${object.status}`
       }
+    : null
+}
     >
       <Map
         mapStyle="mapbox://styles/mapbox/satellite-streets-v12"

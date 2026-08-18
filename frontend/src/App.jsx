@@ -1,11 +1,18 @@
 import MapView from "./components/MapView";
+import RiskSummary from "./components/RiskSummary";
 
 function App() {
   return (
-    <div>
+    <div className="dashboard">
       <h1>TerraSpectra GIS Dashboard</h1>
 
-      <MapView />
+      <div className="dashboard-content">
+        <div className="map-container">
+          <MapView />
+        </div>
+
+        <RiskSummary />
+      </div>
     </div>
   );
 }
