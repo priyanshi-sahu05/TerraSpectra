@@ -1,99 +1,107 @@
-# TerraSpectra – Preprocessing Documentation
+import numpy as np
+import h5py
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
-## 1. Dataset
-A mock hyperspectral dataset is used for the TerraSpectra data pipeline.
 
-- Samples: 100
-- Image height: 32 pixels
-- Image width: 32 pixels
-- Spectral bands: 200
-- Data type: float32
-- Format: HDF5
+def load_dataset(file_path):
+    """Load hyperspectral data and labels from HDF5 file."""
+    with h5py.File(file_path, "r") as f:
+        data = f["data"][:]
+        labels = f["labels"][:]
 
-Original tensor shape:
+    print("Dataset loaded successfully!")
+    print("Original data shape:", data.shape)
 
-(100, 32, 32, 200)
+    return data, labels
 
-## 2. Data Loading
 
-The hyperspectral dataset is loaded using the HDF5 (`h5py`) format.
+def normalize_data(data):
+    """Normalize hyperspectral spectral features."""
+    samples, height, width, bands = data.shape
 
-The data loader reads:
-- Hyperspectral data
-- Corresponding labels
+    pixels = data.reshape(-1, bands)
 
-Labels represent:
-- 0 = Healthy
-- 1 = Diseased
+    scaler = StandardScaler()
+    normalized = scaler.fit_transform(pixels)
 
-## 3. Normalization
+    normalized = normalized.reshape(samples, height, width, bands)
 
-StandardScaler is used to normalize the spectral data.
+    print("Normalization completed successfully!")
+    print("Normalized shape:", normalized.shape)
 
-Normalization is performed after reshaping the data into:
+    return normalized
 
-(samples × height × width, spectral bands)
 
-This makes the spectral features suitable for PCA.
+def apply_pca(data, n_components=20):
+    """Reduce spectral bands using PCA."""
+    samples, height, width, bands = data.shape
 
-## 4. PCA
+    pixels = data.reshape(-1, bands)
 
-Principal Component Analysis (PCA) is applied to reduce the spectral dimensionality.
+    pca = PCA(n_components=n_components)
+    reduced = pca.fit_transform(pixels)
 
-Original spectral bands:
+    reduced = reduced.reshape(samples, height, width, n_components)
 
-200
+    print("PCA completed successfully!")
+    print("After PCA:", reduced.shape)
 
-PCA components:
+    return reduced
 
-20
 
-After PCA, the tensor shape becomes:
+def save_processed_data(file_path, data, labels):
+    """Save processed hyperspectral data."""
+    with h5py.File(file_path, "w") as f:
+        f.create_dataset("data", data=data.astype(np.float32))
+        f.create_dataset("labels", data=labels)
 
-(100, 32, 32, 20)
+    print("Processed dataset saved as:", file_path)
 
-## 5. Batch Processing
+def process_in_batches(data, batch_size=10):
+    """Process dataset in smaller batches to reduce memory usage."""
 
-The processed dataset is tested using batches of 10 samples.
+    total_samples = data.shape[0]
+    num_batches = (total_samples + batch_size - 1) // batch_size
 
-Total samples:
+    print("Batch processing started")
+    print("Total samples:", total_samples)
+    print("Batch size:", batch_size)
+    print("Number of batches:", num_batches)
 
-100
+    for i in range(num_batches):
+        start = i * batch_size
+        end = min(start + batch_size, total_samples)
 
-Number of batches:
+        batch = data[start:end]
 
-10
+        print(
+            f"Batch {i + 1}/{num_batches}: "
+            f"shape = {batch.shape}"
+        )
 
-Each batch shape:
+    print("Batch processing completed successfully!")
 
-(10, 32, 32, 20)
+def main():
+    input_file = "mock_hyperspectral.h5"
+    output_file = "processed_hyperspectral.h5"
 
-## 6. Memory Testing
+    # 1. Load dataset
+    data, labels = load_dataset(input_file)
 
-Memory usage was measured during batch processing.
+    # 2. Normalize
+    normalized = normalize_data(data)
 
-Observed memory increase:
+    # 3. PCA
+    processed = apply_pca(normalized, n_components=20)
 
-0.25 MB
+    process_in_batches(processed, batch_size=10)
 
-This shows that batch processing can reduce unnecessary memory usage compared with loading the entire dataset repeatedly.
+    # 4. Save processed dataset
+    save_processed_data(output_file, processed, labels)
 
-## 7. Final Pipeline
+    print("Preprocessing pipeline completed successfully!")
 
-Hyperspectral Data
-        ↓
-Data Loading
-        ↓
-Normalization
-        ↓
-PCA (200 → 20 components)
-        ↓
-Batch Processing
-        ↓
-ML Model Input
 
-## 8. Output
-
-The processed dataset is saved as:
-
-processed_hyperspectral.h5
+if __name__ == "__main__":
+    main()
