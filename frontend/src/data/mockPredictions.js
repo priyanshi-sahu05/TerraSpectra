@@ -6,7 +6,8 @@ const mockPredictions = [
     longitude: 77.7505,
     risk_score: 0.25,
     status: "Low Risk",
-    disease: "Healthy"
+    disease: "Healthy",
+    acreage: 10
   },
 
   {
@@ -16,7 +17,8 @@ const mockPredictions = [
     longitude: 77.7520,
     risk_score: 0.52,
     status: "Medium Risk",
-    disease: "Early Crop Stress"
+    disease: "Early Crop Stress",
+    acreage: 12
   },
 
   {
@@ -26,7 +28,8 @@ const mockPredictions = [
     longitude: 77.7535,
     risk_score: 0.87,
     status: "High Risk",
-    disease: "Possible Fungal Stress"
+    disease: "Possible Fungal Stress",
+    acreage: 15
   },
 
   {
@@ -36,7 +39,8 @@ const mockPredictions = [
     longitude: 77.7515,
     risk_score: 0.91,
     status: "High Risk",
-    disease: "Possible Fungal Stress"
+    disease: "Possible Fungal Stress",
+    acreage: 20
   },
 
   {
@@ -46,7 +50,8 @@ const mockPredictions = [
     longitude: 77.7545,
     risk_score: 0.68,
     status: "Medium Risk",
-    disease: "Moderate Crop Stress"
+    disease: "Moderate Crop Stress",
+    acreage: 8
   }
 ];
 

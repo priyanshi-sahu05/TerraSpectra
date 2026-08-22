@@ -148,3 +148,41 @@
     max-height: none;
   }
 }
+.acreage-section {
+  margin: 20px 0;
+}
+
+.acreage-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
+.acreage-card strong {
+  font-size: 16px;
+}
+
+.high-acreage {
+  background: #ffe5e5;
+}
+
+.medium-acreage {
+  background: #fff1d6;
+}
+
+.acreage-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 10px;
+  background: #eeeeee;
+}
+
+.acreage-total strong {
+  font-size: 18px;
+}

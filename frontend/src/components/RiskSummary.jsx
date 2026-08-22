@@ -3,6 +3,7 @@ import mockPredictions from "../data/mockPredictions";
 function RiskSummary() {
   const totalZones = mockPredictions.length;
 
+  // Risk counts
   const highRiskCount = mockPredictions.filter(
     (prediction) => prediction.risk_score >= 0.7
   ).length;
@@ -17,12 +18,14 @@ function RiskSummary() {
     (prediction) => prediction.risk_score < 0.4
   ).length;
 
+  // Average risk score
   const averageRisk =
     mockPredictions.reduce(
       (total, prediction) => total + prediction.risk_score,
       0
     ) / totalZones;
 
+  // Highest risk prediction
   const highestRiskPrediction = mockPredictions.reduce(
     (highest, prediction) =>
       prediction.risk_score > highest.risk_score
@@ -31,12 +34,42 @@ function RiskSummary() {
     mockPredictions[0]
   );
 
-  const highPercentage = (highRiskCount / totalZones) * 100;
-  const mediumPercentage = (mediumRiskCount / totalZones) * 100;
-  const lowPercentage = (lowRiskCount / totalZones) * 100;
+  // Acreage calculations
+  const highRiskAcreage = mockPredictions
+    .filter((prediction) => prediction.risk_score >= 0.7)
+    .reduce(
+      (total, prediction) => total + prediction.acreage,
+      0
+    );
+
+  const mediumRiskAcreage = mockPredictions
+    .filter(
+      (prediction) =>
+        prediction.risk_score >= 0.4 &&
+        prediction.risk_score < 0.7
+    )
+    .reduce(
+      (total, prediction) => total + prediction.acreage,
+      0
+    );
+
+  const totalAcreageAtRisk =
+    highRiskAcreage + mediumRiskAcreage;
+
+  // Risk distribution percentages
+  const highPercentage =
+    (highRiskCount / totalZones) * 100;
+
+  const mediumPercentage =
+    (mediumRiskCount / totalZones) * 100;
+
+  const lowPercentage =
+    (lowRiskCount / totalZones) * 100;
 
   return (
     <aside className="analytics-sidebar">
+
+      {/* Analytics Header */}
       <div className="analytics-header">
         <h2>Analytics</h2>
         <p>Crop Disease Risk Overview</p>
@@ -44,8 +77,13 @@ function RiskSummary() {
 
       {/* Total Zones */}
       <div className="analytics-card">
-        <span className="card-label">Total Prediction Zones</span>
-        <strong className="card-value">{totalZones}</strong>
+        <span className="card-label">
+          Total Prediction Zones
+        </span>
+
+        <strong className="card-value">
+          {totalZones}
+        </strong>
       </div>
 
       {/* Risk Counts */}
@@ -75,36 +113,66 @@ function RiskSummary() {
         <div className="distribution-bar">
           <div
             className="distribution-high"
-            style={{ width: `${highPercentage}%` }}
+            style={{
+              width: `${highPercentage}%`
+            }}
           />
 
           <div
             className="distribution-medium"
-            style={{ width: `${mediumPercentage}%` }}
+            style={{
+              width: `${mediumPercentage}%`
+            }}
           />
 
           <div
             className="distribution-low"
-            style={{ width: `${lowPercentage}%` }}
+            style={{
+              width: `${lowPercentage}%`
+            }}
           />
+        </div>
+      </div>
+
+      {/* Acreage at Risk */}
+      <div className="acreage-section">
+        <h3>🌾 Acreage at Risk</h3>
+
+        <div className="acreage-card high-acreage">
+          <span>High Risk Area</span>
+          <strong>{highRiskAcreage} acres</strong>
+        </div>
+
+        <div className="acreage-card medium-acreage">
+          <span>Medium Risk Area</span>
+          <strong>{mediumRiskAcreage} acres</strong>
+        </div>
+
+        <div className="acreage-total">
+          <span>Total Area at Risk</span>
+          <strong>{totalAcreageAtRisk} acres</strong>
         </div>
       </div>
 
       {/* Average Risk */}
       <div className="analytics-card">
-        <span className="card-label">Average Risk Score</span>
+        <span className="card-label">
+          Average Risk Score
+        </span>
 
         <strong className="card-value">
           {(averageRisk * 100).toFixed(1)}%
         </strong>
       </div>
 
-      {/* Highest Risk */}
+      {/* Highest Risk Zone */}
       <div className="highest-risk-card">
         <h3>Highest Risk Zone</h3>
 
         <p>
-          <strong>{highestRiskPrediction.zone_id}</strong>
+          <strong>
+            {highestRiskPrediction.zone_id}
+          </strong>
         </p>
 
         <p>
@@ -121,6 +189,7 @@ function RiskSummary() {
           </strong>
         </p>
       </div>
+
     </aside>
   );
 }
