@@ -3,6 +3,7 @@ import numpy as np
 
 INPUT_FILE = "spectral_patches.h5"
 
+
 def main():
     print("Loading spectral patches...")
 
@@ -13,14 +14,46 @@ def main():
     print("Patches shape:", patches.shape)
     print("Labels shape:", labels.shape)
 
-    print("Feature validation completed successfully!")
+    print("\nChecking preprocessing edge cases...")
 
-    print("Patches dtype:", patches.dtype)
-    print("Labels dtype:", labels.dtype)
+    # Empty dataset check
+    if patches.size == 0:
+        print("ERROR: Patch dataset is empty!")
+    else:
+        print("PASS: Patch dataset is not empty.")
 
-    print("Number of samples:", patches.shape[0])
-    print("Patch size:", patches.shape[1:3])
-    print("Spectral bands:", patches.shape[3])
+    # Shape consistency
+    if patches.shape[0] == labels.shape[0]:
+        print("PASS: Patch and label counts match.")
+    else:
+        print("ERROR: Patch and label counts do not match!")
+
+    # NaN check
+    if np.isnan(patches).any():
+        print("ERROR: NaN values found!")
+    else:
+        print("PASS: No NaN values found.")
+
+    # Infinite value check
+    if np.isinf(patches).any():
+        print("ERROR: Infinite values found!")
+    else:
+        print("PASS: No infinite values found.")
+
+    # Dimension check
+    if patches.ndim == 4:
+        print("PASS: Patch data has expected 4 dimensions.")
+    else:
+        print("ERROR: Unexpected patch dimensions!")
+
+    # Label check
+    if labels.ndim == 1:
+        print("PASS: Labels have expected 1D shape.")
+    else:
+        print("ERROR: Unexpected label shape!")
+
+    print("\nPreprocessing edge-case validation completed!")
+
 
 if __name__ == "__main__":
     main()
