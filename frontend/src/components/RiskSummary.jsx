@@ -1,6 +1,8 @@
 import mockPredictions from "../data/mockPredictions";
 
 function RiskSummary() {
+  const totalZones = mockPredictions.length;
+
   const highRiskCount = mockPredictions.filter(
     (prediction) => prediction.risk_score >= 0.7
   ).length;
@@ -15,32 +17,111 @@ function RiskSummary() {
     (prediction) => prediction.risk_score < 0.4
   ).length;
 
-  const totalZones = mockPredictions.length;
+  const averageRisk =
+    mockPredictions.reduce(
+      (total, prediction) => total + prediction.risk_score,
+      0
+    ) / totalZones;
+
+  const highestRiskPrediction = mockPredictions.reduce(
+    (highest, prediction) =>
+      prediction.risk_score > highest.risk_score
+        ? prediction
+        : highest,
+    mockPredictions[0]
+  );
+
+  const highPercentage = (highRiskCount / totalZones) * 100;
+  const mediumPercentage = (mediumRiskCount / totalZones) * 100;
+  const lowPercentage = (lowRiskCount / totalZones) * 100;
 
   return (
-    <div className="risk-summary">
-      <h2>Risk Summary</h2>
-
-      <div className="risk-item">
-        <span>🔴 High Risk</span>
-        <strong>{highRiskCount}</strong>
+    <aside className="analytics-sidebar">
+      <div className="analytics-header">
+        <h2>Analytics</h2>
+        <p>Crop Disease Risk Overview</p>
       </div>
 
-      <div className="risk-item">
-        <span>🟠 Medium Risk</span>
-        <strong>{mediumRiskCount}</strong>
+      {/* Total Zones */}
+      <div className="analytics-card">
+        <span className="card-label">Total Prediction Zones</span>
+        <strong className="card-value">{totalZones}</strong>
       </div>
 
-      <div className="risk-item">
-        <span>🟢 Low Risk</span>
-        <strong>{lowRiskCount}</strong>
+      {/* Risk Counts */}
+      <div className="risk-section">
+        <h3>Risk Distribution</h3>
+
+        <div className="risk-card high-risk">
+          <span>🔴 High Risk</span>
+          <strong>{highRiskCount}</strong>
+        </div>
+
+        <div className="risk-card medium-risk">
+          <span>🟠 Medium Risk</span>
+          <strong>{mediumRiskCount}</strong>
+        </div>
+
+        <div className="risk-card low-risk">
+          <span>🟢 Low Risk</span>
+          <strong>{lowRiskCount}</strong>
+        </div>
       </div>
 
-      <div className="risk-item total">
-        <span>Total Zones</span>
-        <strong>{totalZones}</strong>
+      {/* Distribution Bar */}
+      <div className="distribution-section">
+        <h3>Risk Distribution %</h3>
+
+        <div className="distribution-bar">
+          <div
+            className="distribution-high"
+            style={{ width: `${highPercentage}%` }}
+          />
+
+          <div
+            className="distribution-medium"
+            style={{ width: `${mediumPercentage}%` }}
+          />
+
+          <div
+            className="distribution-low"
+            style={{ width: `${lowPercentage}%` }}
+          />
+        </div>
       </div>
-    </div>
+
+      {/* Average Risk */}
+      <div className="analytics-card">
+        <span className="card-label">Average Risk Score</span>
+
+        <strong className="card-value">
+          {(averageRisk * 100).toFixed(1)}%
+        </strong>
+      </div>
+
+      {/* Highest Risk */}
+      <div className="highest-risk-card">
+        <h3>Highest Risk Zone</h3>
+
+        <p>
+          <strong>{highestRiskPrediction.zone_id}</strong>
+        </p>
+
+        <p>
+          Risk Score:{" "}
+          <strong>
+            {highestRiskPrediction.risk_score}
+          </strong>
+        </p>
+
+        <p>
+          Status:{" "}
+          <strong>
+            {highestRiskPrediction.status}
+          </strong>
+        </p>
+      </div>
+    </aside>
   );
 }
 
