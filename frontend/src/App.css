@@ -186,3 +186,81 @@
 .acreage-total strong {
   font-size: 18px;
 }
+.risk-score-section {
+  margin: 20px 0;
+}
+
+.overall-risk {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.overall-risk strong {
+  font-size: 22px;
+}
+
+.risk-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.risk-scale-bar {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  border-radius: 10px;
+  background: linear-gradient(
+    to right,
+    #2eaa4f 0%,
+    #2eaa4f 40%,
+    #f39c12 40%,
+    #f39c12 70%,
+    #e53935 70%,
+    #e53935 100%
+  );
+}
+
+.risk-scale-indicator {
+  position: absolute;
+  top: -5px;
+  width: 3px;
+  height: 22px;
+  background: black;
+  transform: translateX(-50%);
+}
+
+.zone-risk-list h4 {
+  margin-bottom: 12px;
+}
+
+.zone-risk-item {
+  margin-bottom: 12px;
+}
+
+.zone-risk-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.zone-risk-bar {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.zone-risk-fill {
+  height: 100%;
+  background: #e53935;
+  border-radius: 10px;
+}

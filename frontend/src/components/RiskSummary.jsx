@@ -164,6 +164,72 @@ function RiskSummary() {
           {(averageRisk * 100).toFixed(1)}%
         </strong>
       </div>
+      
+      {/* Risk Score Visualization */}
+<div className="risk-score-section">
+  <h3>Risk Score Visualization</h3>
+
+  <div className="overall-risk">
+    <span>Overall Risk Score</span>
+
+    <strong>
+      {(averageRisk * 100).toFixed(1)}%
+    </strong>
+  </div>
+
+  <div className="risk-scale">
+    <span>0</span>
+
+    <div className="risk-scale-bar">
+      <div
+        className="risk-scale-indicator"
+        style={{
+          left: `${averageRisk * 100}%`
+        }}
+      />
+    </div>
+
+    <span>1</span>
+  </div>
+
+  <div className="zone-risk-list">
+    <h4>Zone Risk Scores</h4>
+
+    {mockPredictions
+      .slice()
+      .sort(
+        (a, b) =>
+          b.risk_score - a.risk_score
+      )
+      .map((prediction) => (
+        <div
+          className="zone-risk-item"
+          key={prediction.zone_id}
+        >
+          <div className="zone-risk-header">
+            <span>
+              {prediction.zone_id}
+            </span>
+
+            <strong>
+              {prediction.risk_score.toFixed(2)}
+            </strong>
+          </div>
+
+          <div className="zone-risk-bar">
+            <div
+              className="zone-risk-fill"
+              style={{
+                width: `${
+                  prediction.risk_score * 100
+                }%`
+              }}
+            />
+          </div>
+        </div>
+      ))}
+  </div>
+</div>
 
       {/* Highest Risk Zone */}
       <div className="highest-risk-card">
