@@ -8,22 +8,24 @@ TerraSpectra — Hyperspectral Crop Disease Forecasting
 
 Member 3 — Vision Transformer + FastAPI
 
-## CNN → ViT Adapter
+## Prediction Pipeline
 
-A dedicated adapter layer is used between the CNN and ViT.
+The hybrid model is exposed through a reusable prediction
+function.
 
-The adapter currently uses a `1×1×1` 3D convolution to project
-CNN feature channels into the feature dimension expected by
-the ViT.
-
-Example:
+The inference process is:
 
 ```text
-CNN feature
-[B, 32, D, H, W]
-        ↓
-1×1×1 projection
-        ↓
-[B, 16, D, H, W]
-        ↓
-ViT
+Input Tensor
+    ↓
+Hybrid CNN + ViT
+    ↓
+Logits
+    ↓
+Softmax
+    ↓
+Class Probability
+    ↓
+Predicted Class
+    ↓
+Risk Score
