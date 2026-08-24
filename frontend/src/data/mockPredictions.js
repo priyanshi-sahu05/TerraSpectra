@@ -7,7 +7,10 @@ const mockPredictions = [
     risk_score: 0.25,
     status: "Low Risk",
     disease: "Healthy",
-    acreage: 10
+    acreage: 10,
+    anomaly_type: "Normal",
+    anomaly_level: "Low",
+    spectral_deviation: 0.12
   },
 
   {
@@ -18,7 +21,10 @@ const mockPredictions = [
     risk_score: 0.52,
     status: "Medium Risk",
     disease: "Early Crop Stress",
-    acreage: 12
+    acreage: 12,
+    anomaly_type: "Chlorophyll anomaly",
+    anomaly_level: "Medium",
+    spectral_deviation: 0.61
   },
 
   {
@@ -29,7 +35,10 @@ const mockPredictions = [
     risk_score: 0.87,
     status: "High Risk",
     disease: "Possible Fungal Stress",
-    acreage: 15
+    acreage: 15,
+    anomaly_type: "Nitrogen anomaly",
+    anomaly_level: "High",
+    spectral_deviation: 0.78
   },
 
   {
@@ -40,7 +49,10 @@ const mockPredictions = [
     risk_score: 0.91,
     status: "High Risk",
     disease: "Possible Fungal Stress",
-    acreage: 20
+    acreage: 20,
+    anomaly_type: "Water stress anomaly",
+    anomaly_level: "High",
+    spectral_deviation: 0.82
   },
 
   {
@@ -51,7 +63,10 @@ const mockPredictions = [
     risk_score: 0.68,
     status: "Medium Risk",
     disease: "Moderate Crop Stress",
-    acreage: 8
+    acreage: 8,
+    anomaly_type: "Chlorophyll anomaly",
+    anomaly_level: "Medium",
+    spectral_deviation: 0.68
   }
 ];
 
