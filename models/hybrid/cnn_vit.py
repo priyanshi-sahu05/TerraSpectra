@@ -8,10 +8,24 @@ from models.hybrid.adapter import CNNToViTAdapter
 
 class CNNViTHybrid(nn.Module):
     """
-    Temporary CNN + ViT hybrid model.
+    CNN + Vision Transformer hybrid model.
 
-    Current development uses the mock CNN because the real
-    Member 2 CNN has not yet been implemented.
+    Current development version uses MockCNN3D because
+    Member 2's real CNN is not available yet.
+
+    Pipeline:
+
+        Input
+          ↓
+        CNN
+          ↓
+        CNN features
+          ↓
+        CNN → ViT adapter
+          ↓
+        Vision Transformer
+          ↓
+        Classification
     """
 
     def __init__(
@@ -22,12 +36,17 @@ class CNNViTHybrid(nn.Module):
     ):
         super().__init__()
 
+        self.cnn_channels = cnn_channels
+        self.vit_channels = vit_channels
+        self.num_classes = num_classes
+
         # Temporary CNN.
         self.cnn = MockCNN3D(
             num_classes=num_classes,
         )
 
-        # CNN -> ViT feature adapter.
+        # Converts CNN feature channels into the
+        # representation expected by the ViT.
         self.adapter = CNNToViTAdapter(
             input_channels=cnn_channels,
             output_channels=vit_channels,
@@ -42,15 +61,62 @@ class CNNViTHybrid(nn.Module):
             num_layers=2,
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def extract_cnn_features(
+        self,
+        x: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Extract feature representation from the CNN.
+        """
 
-        # Step 1: extract CNN features.
-        cnn_features = self.cnn.forward_features(x)
+        if x.ndim != 5:
+            raise ValueError(
+                "Expected input shape [B, C, D, H, W], "
+                f"but received {tuple(x.shape)}"
+            )
 
-        # Step 2: adapt CNN features for ViT.
-        vit_features = self.adapter(cnn_features)
+        features = self.cnn.forward_features(x)
 
-        # Step 3: Transformer classification.
+        if features.ndim != 5:
+            raise ValueError(
+                "CNN features must have shape "
+                "[B, C, D, H, W]. "
+                f"Received {tuple(features.shape)}"
+            )
+
+        return features
+
+    def adapt_features(
+        self,
+        cnn_features: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Convert CNN features into the representation
+        expected by the ViT.
+        """
+
+        if cnn_features.ndim != 5:
+            raise ValueError(
+                "Expected CNN features with shape "
+                "[B, C, D, H, W]."
+            )
+
+        return self.adapter(cnn_features)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Complete CNN → Adapter → ViT forward pass.
+        """
+
+        cnn_features = self.extract_cnn_features(x)
+
+        vit_features = self.adapt_features(
+            cnn_features
+        )
+
         logits = self.vit(vit_features)
 
         return logits

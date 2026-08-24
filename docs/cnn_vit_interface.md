@@ -8,24 +8,31 @@ TerraSpectra — Hyperspectral Crop Disease Forecasting
 
 Member 3 — Vision Transformer + FastAPI
 
-## Prediction Validation
+## Hybrid Integration
 
-Prediction validation checks the output of the hybrid CNN + ViT
-inference pipeline.
+The current development model exposes three stages:
 
-The following conditions are validated:
+1. CNN feature extraction
+2. CNN-to-ViT feature adaptation
+3. Vision Transformer classification
 
-- Input tensor dimensions
-- Input tensor type
-- Valid class ID
-- Valid class name
-- Probability range
-- Risk score range
-- Probability distribution
-- Evaluation mode
-- Multiple independent predictions
-
-### Current Mock Input
+### Tensor Flow
 
 ```text
-[B, 1, 8, 8, 8]
+Input
+[B, C, D, H, W]
+      ↓
+3D-CNN
+      ↓
+CNN Feature Tensor
+[B, C1, D1, H1, W1]
+      ↓
+CNN → ViT Adapter
+      ↓
+ViT Feature Tensor
+[B, C2, D1, H1, W1]
+      ↓
+Vision Transformer
+      ↓
+Classification Logits
+[B, num_classes]
