@@ -1,23 +1,34 @@
-# TerraSpectra Prediction API
+## FastAPI Implementation
 
-## Purpose
+The first FastAPI version has been implemented.
 
-The Prediction API exposes the hybrid CNN + Vision Transformer
-model to external applications such as the React GIS dashboard.
+### Available Endpoints
 
-## Planned Flow
+#### GET /
+
+Returns basic API information.
+
+#### GET /health
+
+Checks whether the API is running and whether the
+prediction model has been loaded.
+
+#### POST /predict
+
+Runs a prediction using the current mock hyperspectral
+input.
+
+### Current Development Flow
 
 ```text
-React Dashboard
-      ↓
 POST /predict
-      ↓
-FastAPI
-      ↓
-Prediction Service
-      ↓
+     ↓
+Mock Tensor
+     ↓
+PredictionService
+     ↓
 CNN + ViT
-      ↓
+     ↓
 Prediction
-      ↓
-JSON Response
+     ↓
+JSON
