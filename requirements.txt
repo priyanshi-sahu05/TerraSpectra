@@ -1,0 +1,9 @@
+torch
+torchvision
+fastapi
+uvicorn
+pydantic
+numpy
+rasterio
+pytest
+httpx
