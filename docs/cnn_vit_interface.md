@@ -8,24 +8,24 @@ TerraSpectra — Hyperspectral Crop Disease Forecasting
 
 Member 3 — Vision Transformer + FastAPI
 
-## Prediction Pipeline
+## Prediction Validation
 
-The hybrid model is exposed through a reusable prediction
-function.
+Prediction validation checks the output of the hybrid CNN + ViT
+inference pipeline.
 
-The inference process is:
+The following conditions are validated:
+
+- Input tensor dimensions
+- Input tensor type
+- Valid class ID
+- Valid class name
+- Probability range
+- Risk score range
+- Probability distribution
+- Evaluation mode
+- Multiple independent predictions
+
+### Current Mock Input
 
 ```text
-Input Tensor
-    ↓
-Hybrid CNN + ViT
-    ↓
-Logits
-    ↓
-Softmax
-    ↓
-Class Probability
-    ↓
-Predicted Class
-    ↓
-Risk Score
+[B, 1, 8, 8, 8]
