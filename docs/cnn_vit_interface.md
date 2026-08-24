@@ -8,31 +8,29 @@ TerraSpectra — Hyperspectral Crop Disease Forecasting
 
 Member 3 — Vision Transformer + FastAPI
 
-## Hybrid Integration
+## Forward-Pass Validation
 
-The current development model exposes three stages:
+The hybrid model was tested using mock hyperspectral tensors.
 
-1. CNN feature extraction
-2. CNN-to-ViT feature adaptation
-3. Vision Transformer classification
-
-### Tensor Flow
+The forward path is:
 
 ```text
-Input
-[B, C, D, H, W]
-      ↓
+Input Tensor
+    ↓
 3D-CNN
-      ↓
+    ↓
 CNN Feature Tensor
-[B, C1, D1, H1, W1]
-      ↓
+    ↓
 CNN → ViT Adapter
-      ↓
-ViT Feature Tensor
-[B, C2, D1, H1, W1]
-      ↓
-Vision Transformer
-      ↓
-Classification Logits
-[B, num_classes]
+    ↓
+ViT Feature Representation
+    ↓
+Transformer Encoder
+    ↓
+Classification Head
+    ↓
+Logits
+    ↓
+Softmax
+    ↓
+Class Probabilities
