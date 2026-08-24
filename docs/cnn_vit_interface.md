@@ -8,26 +8,22 @@ TerraSpectra — Hyperspectral Crop Disease Forecasting
 
 Member 3 — Vision Transformer + FastAPI
 
-## Current Development Status
+## CNN → ViT Adapter
 
-Member 2's 3D-CNN has not yet been implemented.
+A dedicated adapter layer is used between the CNN and ViT.
 
-Therefore, Member 3 development currently uses a temporary
-mock CNN feature extractor.
+The adapter currently uses a `1×1×1` 3D convolution to project
+CNN feature channels into the feature dimension expected by
+the ViT.
 
-The mock implementation is only for development and testing.
-
-## Mock CNN Input
-
-```text
-[B, 1, D, H, W]
-
-## Standalone ViT Development
-
-A standalone Vision Transformer has been implemented using
-controlled mock CNN feature tensors.
-
-### Mock CNN Feature
+Example:
 
 ```text
+CNN feature
+[B, 32, D, H, W]
+        ↓
+1×1×1 projection
+        ↓
 [B, 16, D, H, W]
+        ↓
+ViT
