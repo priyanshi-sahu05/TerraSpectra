@@ -21,3 +21,13 @@ The mock implementation is only for development and testing.
 
 ```text
 [B, 1, D, H, W]
+
+## Standalone ViT Development
+
+A standalone Vision Transformer has been implemented using
+controlled mock CNN feature tensors.
+
+### Mock CNN Feature
+
+```text
+[B, 16, D, H, W]
