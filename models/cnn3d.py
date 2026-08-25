@@ -8,19 +8,29 @@ class Basic3DCNN(nn.Module):
 
         self.features = nn.Sequential(
             nn.Conv3d(1, 8, kernel_size=3, padding=1),
+            nn.BatchNorm3d(8),
             nn.ReLU(),
             nn.MaxPool3d(2),
 
             nn.Conv3d(8, 16, kernel_size=3, padding=1),
+            nn.BatchNorm3d(16),
             nn.ReLU(),
+            nn.MaxPool3d(2),
+
+            nn.Conv3d(16, 32, kernel_size=3, padding=1),
+            nn.BatchNorm3d(32),
+            nn.ReLU(),
+
             nn.AdaptiveAvgPool3d((1, 1, 1))
         )
 
-        self.classifier = nn.Linear(16, num_classes)
+        self.dropout = nn.Dropout(0.3)
+        self.classifier = nn.Linear(32, num_classes)
 
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
+        x = self.dropout(x)
         return self.classifier(x)
 
 
@@ -34,4 +44,4 @@ if __name__ == "__main__":
 
     print("Input shape:", x.shape)
     print("Output shape:", output.shape)
-    print("Forward pass successful!")
+    print("Improved 3D-CNN forward pass successful!")
