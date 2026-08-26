@@ -61,6 +61,8 @@ class TilePrediction(BaseModel):
 
     class_id: int
 
+    class_name: str
+
     probability: float = Field(
         ge=0.0,
         le=1.0,

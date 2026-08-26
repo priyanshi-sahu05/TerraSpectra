@@ -39,9 +39,15 @@ def test_predict_tiles():
         assert "width" in result
 
         assert "class_id" in result
+        assert "class_name" in result
         assert "probability" in result
 
         assert result["class_id"] in [0, 1]
+
+        assert result["class_name"] in [
+            "Healthy",
+            "Chemically Stressed",
+        ]
 
         assert (
             0.0

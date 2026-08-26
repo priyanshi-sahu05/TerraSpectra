@@ -123,15 +123,20 @@ def predict_tiles(
             ].item()
 
             results.append(
-                {
-                    "tile_id": index,
-                    "row": item["row"],
-                    "col": item["col"],
-                    "height": item["height"],
-                    "width": item["width"],
-                    "class_id": class_id,
-                    "probability": probability,
-                }
-            )
+    {
+        "tile_id": index,
+        "row": item["row"],
+        "col": item["col"],
+        "height": item["height"],
+        "width": item["width"],
+        "class_id": class_id,
+        "class_name": (
+            "Healthy"
+            if class_id == 0
+            else "Chemically Stressed"
+        ),
+        "probability": probability,
+    }
+)
 
     return results
