@@ -2,7 +2,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import torch
 
-from api.schemas import PredictionResponse
+from api.schemas import (
+    PredictionRequest,
+    PredictionResponse,
+)
 from services.prediction_service import PredictionService
 
 
@@ -52,29 +55,56 @@ def health_check():
     "/predict",
     response_model=PredictionResponse,
 )
-def predict():
+def predict(
+    request: PredictionRequest,
+):
     """
-    Temporary development prediction endpoint.
+    Generate a prediction from validated input data.
 
-    Currently uses a mock hyperspectral tensor because
-    the real raster input pipeline is not connected yet.
+    The current implementation accepts mock tensor data
+    through the API. Real raster/tile input will be added later.
     """
 
     try:
 
-        mock_input = torch.randn(
+        expected_size = (
+            request.channels
+            * request.depth
+            * request.height
+            * request.width
+        )
+
+        if len(request.data) != expected_size:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Data length does not match "
+                    "the provided tensor dimensions."
+                ),
+            )
+
+        tensor = torch.tensor(
+            request.data,
+            dtype=torch.float32,
+        )
+
+        tensor = tensor.reshape(
             1,
-            1,
-            8,
-            8,
-            8,
+            request.channels,
+            request.depth,
+            request.height,
+            request.width,
         )
 
         result = prediction_service.predict(
-            mock_input
+            tensor
         )
 
         return result
+
+    except HTTPException:
+        raise
 
     except Exception as error:
 

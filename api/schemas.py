@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field
 
 class PredictionResponse(BaseModel):
     class_id: int = Field(
@@ -20,4 +20,30 @@ class PredictionResponse(BaseModel):
         ge=0.0,
         le=1.0,
         description="Chemical stress risk score"
+    )
+
+class PredictionRequest(BaseModel):
+
+    data: list[float] = Field(
+        description="Flattened hyperspectral input data"
+    )
+
+    channels: int = Field(
+        gt=0,
+        description="Number of input channels"
+    )
+
+    depth: int = Field(
+        gt=0,
+        description="Depth of the input tensor"
+    )
+
+    height: int = Field(
+        gt=0,
+        description="Height of the input tensor"
+    )
+
+    width: int = Field(
+        gt=0,
+        description="Width of the input tensor"
     )
