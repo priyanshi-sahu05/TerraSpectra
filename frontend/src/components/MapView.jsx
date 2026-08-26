@@ -5,17 +5,17 @@ import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import mockPredictions from "../data/mockPredictions";
+
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-function MapView() {
+function MapView({predictions}) {
   const layers = [
     // Disease-risk heatmap
     new HeatmapLayer({
       id: "risk-heatmap",
 
-      data: mockPredictions,
+      data: predictions,
 
       getPosition: (d) => [
         d.longitude,
@@ -36,7 +36,7 @@ function MapView() {
     new ScatterplotLayer({
       id: "prediction-points",
 
-      data: mockPredictions,
+      data: predictions,
 
       getPosition: (d) => [
         d.longitude,

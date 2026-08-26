@@ -1,7 +1,5 @@
-import mockPredictions from "../data/mockPredictions";
-
-function AnomalyPanel() {
-  const anomalyZones = mockPredictions.filter(
+function AnomalyPanel({predictions}) {
+  const anomalyZones = predictions.filter(
     (prediction) => prediction.anomaly_level !== "Low"
   );
 

@@ -1,42 +1,41 @@
-import mockPredictions from "../data/mockPredictions";
 import AnomalyPanel from "./AnomalyPanel";
 
-function RiskSummary() {
-  const totalZones = mockPredictions.length;
+function RiskSummary({predictions}) {
+  const totalZones = predictions.length;
 
   // Risk counts
-  const highRiskCount = mockPredictions.filter(
+  const highRiskCount = predictions.filter(
     (prediction) => prediction.risk_score >= 0.7,
   ).length;
 
-  const mediumRiskCount = mockPredictions.filter(
+  const mediumRiskCount = predictions.filter(
     (prediction) => prediction.risk_score >= 0.4 && prediction.risk_score < 0.7,
   ).length;
 
-  const lowRiskCount = mockPredictions.filter(
+  const lowRiskCount = predictions.filter(
     (prediction) => prediction.risk_score < 0.4,
   ).length;
 
   // Average risk score
   const averageRisk =
-    mockPredictions.reduce(
+    predictions.reduce(
       (total, prediction) => total + prediction.risk_score,
       0,
     ) / totalZones;
 
   // Highest risk prediction
-  const highestRiskPrediction = mockPredictions.reduce(
+  const highestRiskPrediction = predictions.reduce(
     (highest, prediction) =>
       prediction.risk_score > highest.risk_score ? prediction : highest,
-    mockPredictions[0],
+    predictions[0],
   );
 
   // Acreage calculations
-  const highRiskAcreage = mockPredictions
+  const highRiskAcreage = predictions
     .filter((prediction) => prediction.risk_score >= 0.7)
     .reduce((total, prediction) => total + prediction.acreage, 0);
 
-  const mediumRiskAcreage = mockPredictions
+  const mediumRiskAcreage = predictions
     .filter(
       (prediction) =>
         prediction.risk_score >= 0.4 && prediction.risk_score < 0.7,
@@ -172,7 +171,7 @@ function RiskSummary() {
         <div className="zone-risk-list">
           <h4>Zone Risk Scores</h4>
 
-          {mockPredictions
+          {predictions
             .slice()
             .sort((a, b) => b.risk_score - a.risk_score)
             .map((prediction) => (
@@ -198,7 +197,7 @@ function RiskSummary() {
 
       {/* Anomaly Information */}
 
-      <AnomalyPanel />
+      <AnomalyPanel predictions={predictions}/>
 
       {/* Highest Risk Zone */}
       <div className="highest-risk-card">
