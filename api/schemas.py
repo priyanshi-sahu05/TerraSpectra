@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from pydantic import BaseModel, Field
 
 class PredictionResponse(BaseModel):
     class_id: int = Field(
@@ -47,3 +46,47 @@ class PredictionRequest(BaseModel):
         gt=0,
         description="Width of the input tensor"
     )
+
+class TilePrediction(BaseModel):
+
+    tile_id: int
+
+    row: int
+
+    col: int
+
+    height: int
+
+    width: int
+
+    class_id: int
+
+    probability: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+
+class TiledPredictionResponse(BaseModel):
+
+    total_tiles: int
+
+    healthy_tiles: int
+
+    stressed_tiles: int
+
+    stressed_ratio: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+    average_probability: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+    overall_class_id: int
+
+    overall_class_name: str
+
+    tiles: list[TilePrediction]

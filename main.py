@@ -5,10 +5,14 @@ import torch
 from api.schemas import (
     PredictionRequest,
     PredictionResponse,
+    TiledPredictionResponse,
 )
+
 from services.prediction_service import PredictionService
 
-
+from inference.tiled_pipeline import (
+    run_tiled_inference,
+)
 app = FastAPI(
     title="TerraSpectra Prediction API",
     description=(
@@ -111,4 +115,74 @@ def predict(
         raise HTTPException(
             status_code=500,
             detail=f"Prediction failed: {str(error)}",
+        )
+
+@app.post(
+    "/predict/tiles",
+    response_model=TiledPredictionResponse,
+)
+def predict_tiles(
+    request: PredictionRequest,
+):
+    """
+    Run tiled inference on a mock raster.
+
+    The input tensor is divided into smaller tiles,
+    predictions are generated for each tile,
+    and the results are aggregated.
+    """
+
+    try:
+
+        expected_size = (
+            request.channels
+            * request.depth
+            * request.height
+            * request.width
+        )
+
+        if len(request.data) != expected_size:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Data length does not match "
+                    "the provided tensor dimensions."
+                ),
+            )
+
+        tensor = torch.tensor(
+            request.data,
+            dtype=torch.float32,
+        )
+
+        raster = tensor.reshape(
+            request.channels,
+            request.depth,
+            request.height,
+            request.width,
+        )
+
+        result = run_tiled_inference(
+            prediction_service.model,
+            raster,
+            tile_height=8,
+            tile_width=8,
+        )
+
+        return {
+            **result["summary"],
+            "tiles": result["tiles"],
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as error:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                f"Tiled prediction failed: {str(error)}"
+            ),
         )

@@ -1,87 +1,137 @@
 import torch
 
-from models.vit import CLASS_LABELS
-
 
 def predict_sample(
-    model: torch.nn.Module,
+    model,
     input_tensor: torch.Tensor,
 ) -> dict:
     """
-    Run inference on one hyperspectral sample.
+    Generate prediction for one sample.
 
-    Expected input:
-        [1, C, D, H, W]
+    Expected input shape:
 
-    Returns:
-        Structured prediction dictionary.
+        [B, C, D, H, W]
     """
 
-    if not isinstance(input_tensor, torch.Tensor):
+    if not isinstance(
+        input_tensor,
+        torch.Tensor,
+    ):
         raise TypeError(
             "input_tensor must be a torch.Tensor"
         )
 
     if input_tensor.ndim != 5:
         raise ValueError(
-            "Expected input shape [B, C, D, H, W], "
-            f"but received {tuple(input_tensor.shape)}"
+            "Expected input shape "
+            "[B, C, D, H, W]. "
+            f"Received "
+            f"{tuple(input_tensor.shape)}"
         )
 
     if input_tensor.shape[0] != 1:
         raise ValueError(
-            "predict_sample expects exactly one sample. "
-            f"Received batch size {input_tensor.shape[0]}."
-        )
+        "predict_sample expects "
+        "exactly one sample. "
+        f"Received batch size "
+        f"{input_tensor.shape[0]}"
+    )
 
     model.eval()
 
     with torch.no_grad():
 
-        logits = model(input_tensor)
-
-        if logits.ndim != 2:
-            raise ValueError(
-                "Model output must have shape [B, num_classes]. "
-                f"Received {tuple(logits.shape)}"
-            )
+        logits = model(
+            input_tensor
+        )
 
         probabilities = torch.softmax(
             logits,
             dim=1,
         )
 
-        predicted_class_id = torch.argmax(
+        class_id = torch.argmax(
             probabilities,
             dim=1,
         ).item()
 
-        predicted_probability = probabilities[
+        probability = probabilities[
             0,
-            predicted_class_id,
+            class_id,
         ].item()
-
-        # Class 1 represents chemically stressed
-        # in the current mock setup.
-        risk_score = probabilities[
-            0,
-            1,
-        ].item()
-
-    class_name = CLASS_LABELS.get(
-        predicted_class_id,
-        "Unknown",
-    )
 
     return {
-        "class_id": predicted_class_id,
-        "class_name": class_name,
-        "probability": round(
-            predicted_probability,
-            4,
+        "class_id": class_id,
+        "class_name": (
+            "Healthy"
+            if class_id == 0
+            else "Chemically Stressed"
         ),
-        "risk_score": round(
-            risk_score,
-            4,
-        ),
+        "probability": probability,
+        "risk_score": probability,
     }
+
+
+def predict_tiles(
+    model,
+    tiles,
+):
+    """
+    Run model inference on each raster tile.
+
+    Tile shape:
+
+        [C, D, H, W]
+
+    Model input:
+
+        [B, C, D, H, W]
+    """
+
+    model.eval()
+
+    results = []
+
+    with torch.no_grad():
+
+        for index, item in enumerate(
+            tiles
+        ):
+
+            tile = item["tile"]
+
+            # Add batch dimension
+            model_input = tile.unsqueeze(0)
+
+            logits = model(
+                model_input
+            )
+
+            probabilities = torch.softmax(
+                logits,
+                dim=1,
+            )
+
+            class_id = torch.argmax(
+                probabilities,
+                dim=1,
+            ).item()
+
+            probability = probabilities[
+                0,
+                class_id,
+            ].item()
+
+            results.append(
+                {
+                    "tile_id": index,
+                    "row": item["row"],
+                    "col": item["col"],
+                    "height": item["height"],
+                    "width": item["width"],
+                    "class_id": class_id,
+                    "probability": probability,
+                }
+            )
+
+    return results
