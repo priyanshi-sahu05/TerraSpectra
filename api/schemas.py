@@ -92,3 +92,44 @@ class TiledPredictionResponse(BaseModel):
     overall_class_name: str
 
     tiles: list[TilePrediction]
+
+class TilePrediction(BaseModel):
+
+    tile_id: int
+    row: int
+    col: int
+
+    height: int
+    width: int
+
+    class_id: int
+    class_name: str
+
+    probability: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+
+class TiledPredictionResponse(BaseModel):
+
+    total_tiles: int
+
+    healthy_tiles: int
+    stressed_tiles: int
+
+    stressed_ratio: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+    average_probability: float = Field(
+        ge=0.0,
+        le=1.0,
+    )
+
+    overall_class_id: int
+
+    overall_class_name: str
+
+    tiles: list[TilePrediction]
