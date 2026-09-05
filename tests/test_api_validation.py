@@ -6,14 +6,14 @@ from main import app
 client = TestClient(app)
 
 
-def test_predict_invalid_dimensions():
+def test_predict_rejects_wrong_data_length():
 
     payload = {
-        "data": [0.1, 0.2, 0.3],
+        "data": [0.0, 0.0],
         "channels": 1,
-        "depth": 8,
-        "height": 8,
-        "width": 8,
+        "depth": 1,
+        "height": 2,
+        "width": 2,
     }
 
     response = client.post(
@@ -28,13 +28,15 @@ def test_predict_invalid_dimensions():
         in response.json()["detail"]
     )
 
-def test_predict_missing_data():
+
+def test_predict_rejects_invalid_dimensions():
 
     payload = {
-        "channels": 1,
-        "depth": 8,
-        "height": 8,
-        "width": 8,
+        "data": [0.0],
+        "channels": 0,
+        "depth": 1,
+        "height": 1,
+        "width": 1,
     }
 
     response = client.post(
@@ -43,3 +45,36 @@ def test_predict_missing_data():
     )
 
     assert response.status_code == 422
+
+def test_predict_rejects_missing_data():
+
+    payload = {
+        "channels": 1,
+        "depth": 1,
+        "height": 1,
+        "width": 1,
+    }
+
+    response = client.post(
+        "/predict",
+        json=payload,
+    )
+
+    assert response.status_code == 422
+
+def test_predict_tiles_rejects_wrong_data_length():
+
+    payload = {
+        "data": [0.0],
+        "channels": 1,
+        "depth": 8,
+        "height": 16,
+        "width": 16,
+    }
+
+    response = client.post(
+        "/predict/tiles",
+        json=payload,
+    )
+
+    assert response.status_code == 400
