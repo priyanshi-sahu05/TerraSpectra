@@ -1,15 +1,9 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class VisionTransformer(nn.Module):
-    """
-    Small Vision Transformer for TerraSpectra.
-
-    This is a development model.
-    The input representation will later be connected
-    to the real CNN feature representation.
-    """
 
     def __init__(
         self,
@@ -25,21 +19,17 @@ class VisionTransformer(nn.Module):
         self.input_channels = input_channels
         self.embed_dim = embed_dim
         self.num_classes = num_classes
+        self.pool_size = (4, 4, 4)
 
-        # Converts each spatial/spectral feature vector
-        # into the Transformer embedding dimension.
         self.feature_projection = nn.Linear(
             input_channels,
-            embed_dim
+            embed_dim,
         )
 
-        # Learnable classification token.
         self.cls_token = nn.Parameter(
             torch.zeros(1, 1, embed_dim)
         )
 
-        # Positional embeddings are created dynamically
-        # based on the number of tokens.
         self.position_embedding = None
 
         encoder_layer = nn.TransformerEncoderLayer(
@@ -60,7 +50,7 @@ class VisionTransformer(nn.Module):
 
         self.classifier = nn.Linear(
             embed_dim,
-            num_classes
+            num_classes,
         )
 
     def _create_position_embedding(
@@ -68,11 +58,6 @@ class VisionTransformer(nn.Module):
         num_tokens: int,
         device: torch.device,
     ):
-        """
-        Create learnable positional embeddings for the
-        current number of tokens.
-        """
-
         if (
             self.position_embedding is None
             or self.position_embedding.shape[1] != num_tokens
@@ -92,18 +77,6 @@ class VisionTransformer(nn.Module):
             )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Forward pass.
-
-        Expected input:
-            [B, C, D, H, W]
-
-        Example:
-            [2, 16, 16, 16, 16]
-
-        Returns:
-            [B, num_classes]
-        """
 
         if x.ndim != 5:
             raise ValueError(
@@ -119,45 +92,38 @@ class VisionTransformer(nn.Module):
                 f"but received {channels}"
             )
 
-        # Move channels to the last dimension:
-        #
-        # [B, C, D, H, W]
-        #       ↓
-        # [B, D, H, W, C]
-        x = x.permute(0, 2, 3, 4, 1)
+        x = F.adaptive_avg_pool3d(
+            x,
+            self.pool_size,
+        )
 
-        # Convert the 3D feature grid into a token sequence.
-        #
-        # [B, D, H, W, C]
-        #       ↓
-        # [B, D*H*W, C]
+        x = x.permute(
+            0,
+            2,
+            3,
+            4,
+            1,
+        )
+
         x = x.reshape(
             batch_size,
-            depth * height * width,
+            -1,
             channels,
         )
 
-        # Project CNN features into Transformer embedding space.
-        #
-        # [B, tokens, C]
-        #       ↓
-        # [B, tokens, embed_dim]
         x = self.feature_projection(x)
 
-        # Create CLS token for each sample.
         cls_token = self.cls_token.expand(
             batch_size,
             -1,
             -1,
         )
 
-        # Add CLS token at the beginning.
         x = torch.cat(
             [cls_token, x],
             dim=1,
         )
 
-        # Create positional embeddings.
         self._create_position_embedding(
             x.shape[1],
             x.device,
@@ -165,14 +131,16 @@ class VisionTransformer(nn.Module):
 
         x = x + self.position_embedding
 
-        # Transformer encoder.
         x = self.transformer(x)
 
-        # Use CLS token for classification.
         cls_output = x[:, 0]
 
-        cls_output = self.norm(cls_output)
+        cls_output = self.norm(
+            cls_output
+        )
 
-        logits = self.classifier(cls_output)
+        logits = self.classifier(
+            cls_output
+        )
 
         return logits
