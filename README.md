@@ -1,24 +1,4 @@
-{
-  "total_tiles": 4,
-  "healthy_tiles": 3,
-  "stressed_tiles": 1,
-  "stressed_ratio": 0.25,
-  "average_probability": 0.72,
-  "overall_class_id": 1,
-  "overall_class_name": "Chemically Stressed",
-  "tiles": [
-    {
-      "tile_id": 0,
-      "row": 0,
-      "col": 0,
-      "height": 8,
-      "width": 8,
-      "class_id": 0,
-      "class_name": "Healthy",
-      "probability": 0.71
-    }
-  ]
-}## Member 3 — ViT + FastAPI
+## Member 3 — ViT + FastAPI
 
 TerraSpectra uses a hybrid CNN + Vision Transformer architecture
 for hyperspectral crop stress prediction.
