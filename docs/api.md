@@ -1,34 +1,83 @@
-## FastAPI Implementation
+# TerraSpectra Prediction API
 
-The first FastAPI version has been implemented.
+## Base URL
 
-### Available Endpoints
+http://127.0.0.1:8000
 
-#### GET /
+## Endpoints
 
-Returns basic API information.
+### GET /
 
-#### GET /health
+Checks whether the API service is running.
 
-Checks whether the API is running and whether the
-prediction model has been loaded.
+### GET /health
 
-#### POST /predict
+Checks API health and model availability.
 
-Runs a prediction using the current mock hyperspectral
-input.
+### POST /predict
 
-### Current Development Flow
+Generates a prediction for one hyperspectral sample.
 
-```text
-POST /predict
-     ↓
-Mock Tensor
-     ↓
-PredictionService
-     ↓
-CNN + ViT
-     ↓
-Prediction
-     ↓
-JSON
+### POST /predict/tiles
+
+Runs prediction on multiple raster tiles and returns aggregated results.
+
+---
+
+# POST /predict/tiles
+
+## Request
+
+The API accepts flattened tensor data.
+
+Example dimensions:
+
+- channels: 1
+- depth: 8
+- height: 16
+- width: 16
+
+The number of values must be:
+
+channels × depth × height × width
+
+For the above example:
+
+1 × 8 × 16 × 16 = 2048 values.
+
+## Response
+
+The response contains:
+
+- total_tiles
+- healthy_tiles
+- stressed_tiles
+- stressed_ratio
+- average_probability
+- overall_class_id
+- overall_class_name
+- tiles
+
+Each tile contains:
+
+- tile_id
+- row
+- col
+- height
+- width
+- class_id
+- class_name
+- probability
+
+## Class Labels
+
+| Class ID | Class |
+|---|---|
+| 0 | Healthy |
+| 1 | Chemically Stressed |
+
+## Important
+
+The current project uses mock input/model components for development.
+
+The predictions are therefore demonstrations of the complete inference pipeline and are not final agricultural predictions.
