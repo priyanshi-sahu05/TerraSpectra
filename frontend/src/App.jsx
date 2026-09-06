@@ -34,6 +34,11 @@ function App() {
     loadPredictions();
   }, []);
 
+  const displayPredictions =
+    dates.length > 0
+      ? historicalPredictions[selectedDate]
+      : predictions;
+
   if (loading) {
     return <Loading/>;
   }
@@ -56,10 +61,10 @@ function App() {
 
       <div className="dashboard-content">
         <main className="map-container">
-          <MapView predictions={predictions} />
+          <MapView predictions={displayPredictions} />
         </main>
 
-        <RiskSummary predictions={predictions} />
+        <RiskSummary predictions={displayPredictions} />
       </div>
 
       <Timeline
