@@ -1,36 +1,54 @@
-# TerraSpectra GIS Coordinate Mapping
+# TerraSpectra GIS Dashboard
 
-## 1. Overview
+## Overview
 
-TerraSpectra uses geographical coordinates to display crop disease prediction results on the GIS dashboard.
+The TerraSpectra GIS Dashboard is the frontend visualization module of the project.
 
-The prediction data contains latitude and longitude values.
+It displays crop disease prediction results on an interactive map.
 
-The frontend uses React, Deck.gl, and Mapbox to visualize these coordinates.
+## Technologies
 
----
+### React
 
-## 2. Coordinate Structure
+React is used to build the dashboard user interface.
+
+### Mapbox
+
+Mapbox provides the interactive geographical map.
+
+### Deck.gl
+
+Deck.gl is used to visualize prediction data on top of the map.
+
+### ScatterplotLayer
+
+ScatterplotLayer displays individual prediction zones as points.
+
+### HeatmapLayer
+
+HeatmapLayer visualizes areas with higher disease-risk concentration.
+
+### Axios
+
+Axios is used for communication with the backend prediction API.
+
+## Coordinate Mapping
 
 Each prediction contains:
 
-- prediction_id
-- zone_id
 - latitude
 - longitude
 - risk_score
+- zone_id
 - status
-- disease
 
 Example:
 
 ```javascript
 {
-  prediction_id: "PRED_001",
-  zone_id: "ZONE_01",
-  latitude: 8.7205,
-  longitude: 77.7505,
-  risk_score: 0.25,
-  status: "Low Risk",
-  disease: "Healthy"
+  zone_id: "ZONE_03",
+  latitude: 8.7195,
+  longitude: 77.7535,
+  risk_score: 0.87,
+  status: "High Risk"
 }
