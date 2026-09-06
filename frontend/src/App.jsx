@@ -4,12 +4,16 @@ import MapView from "./components/MapView";
 import RiskSummary from "./components/RiskSummary";
 import Loading from "./components/Loading";
 import { fetchPredictions } from "./services/predictionService";
+import Timeline from "./components/Timeline";
+import historicalPredictions from "./data/historicalPredictions";
 
 function App() {
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const dates = Object.keys(historicalPredictions);
+  const [selectedDate, setSelectedDate] = useState(dates[0]);
+  
   useEffect(() => {
     const loadPredictions = async () => {
       try {
@@ -54,6 +58,11 @@ function App() {
 
         <RiskSummary predictions={predictions} />
       </div>
+      <Timeline
+  dates={dates}
+  selectedDate={selectedDate}
+  onDateChange={setSelectedDate}
+/>
     </div>
   );
 }
