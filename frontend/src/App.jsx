@@ -49,22 +49,25 @@ function App() {
 
   return (
     <div className="dashboard">
-      <h1>TerraSpectra GIS Dashboard</h1>
+      <header className="dashboard-header">
+        <h1>TerraSpectra GIS Dashboard</h1>
+        <p>Hyperspectral Crop Disease Monitoring</p>
+      </header>
 
       <div className="dashboard-content">
-        <div className="map-container">
+        <main className="map-container">
           <MapView predictions={predictions} />
-        </div>
+        </main>
 
         <RiskSummary predictions={predictions} />
       </div>
+
       <Timeline
-  dates={dates}
-  selectedDate={selectedDate}
-  onDateChange={setSelectedDate}
-/>
+        dates={dates}
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+      />
     </div>
   );
 }
-
 export default App;
