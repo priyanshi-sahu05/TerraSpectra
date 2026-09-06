@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import MapView from "./components/MapView";
 import RiskSummary from "./components/RiskSummary";
-
+import Loading from "./components/Loading";
 import { fetchPredictions } from "./services/predictionService";
 
 function App() {
@@ -31,12 +31,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="dashboard-status">
-        <h2>Loading TerraSpectra predictions...</h2>
-        <p>Please wait while prediction data is loading.</p>
-      </div>
-    );
+    return <Loading/>;
   }
 
   if (error) {
