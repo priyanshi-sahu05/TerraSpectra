@@ -25,11 +25,11 @@ function MapView({predictions}) {
       // Risk score controls heatmap intensity
       getWeight: (d) => d.risk_score,
 
-      radiusPixels: 60,
+      radiusPixels: 80,
 
-      intensity: 1,
+      intensity: 1.5,
 
-      threshold: 0.05
+      threshold: 0.03
     }),
 
     // Individual prediction points
