@@ -268,6 +268,9 @@ for epoch in range(epochs):
 
 print("Hybrid CNN + ViT training completed!")
 
+torch.save(model.state_dict(), "models/final_hybrid_model.pth")
+print("Final model saved!")
+
 # ==============================
 # 6. EVALUATION
 # ==============================
