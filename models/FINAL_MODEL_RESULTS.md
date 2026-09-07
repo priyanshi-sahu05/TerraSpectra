@@ -73,3 +73,12 @@ The number of predictions matched the number of validation samples.
 The TerraSpectra machine learning pipeline successfully trained and validated a Hybrid CNN + ViT model for hyperspectral crop disease classification.
 
 The final model and results are maintained in the `m2-m1` branch.
+
+## Final Verification – Sep 4
+
+- Final Hybrid CNN + ViT model was verified successfully.
+- Validation predictions were generated successfully.
+- The number of predictions matched the validation samples.
+- Individual tile prediction, batch inference, tile prediction validation, and model performance tests were completed.
+- Inference optimization was verified successfully.
+- Final model results and documentation were reviewed.
