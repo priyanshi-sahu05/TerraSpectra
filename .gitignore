@@ -1,0 +1,11 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated large datasets
+spectral_patches.h5
+
+# Generated preprocessing outputs
+*.h5
+*.npy
+*.npz
